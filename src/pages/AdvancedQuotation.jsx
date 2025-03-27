@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import './QuotationForm.css';
 
 const AdvancedQuotation = () => {
@@ -156,17 +155,30 @@ const AdvancedQuotation = () => {
         selectedAnimations: selectedAnimations,
         additionalFeatures: additionalFeatures,
         estimatedPrice: price,
+        finalPrice: price, // Añadimos el precio final igual al estimado inicialmente
         submissionDate: new Date(),
         status: 'pending'
       };
       
-      // Enviar los datos al backend
-      const response = await axios.post('http://localhost:5000/api/quotations', quotationData);
+      // Enviar los datos al backend usando fetch en lugar de axios
+      const response = await fetch('http://localhost:5000/api/quotations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quotationData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      
+      const data = await response.json();
       
       setSubmitStatus({
         success: true,
         message: 'Cotización enviada correctamente. Nos pondremos en contacto pronto para negociar los detalles.',
-        quotationId: response.data._id
+        quotationId: data._id
       });
       
       // Resetear el formulario
@@ -480,7 +492,7 @@ const AdvancedQuotation = () => {
                   checked={selectedAnimations.includes('fade')}
                   onChange={(e) => handleAnimationSelect('fade')}
                 />
-                <label htmlFor="animation-fade">Fade In/Out</label>
+                <label htmlFor="animation-fade">Aparición suave de elementos</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -491,7 +503,7 @@ const AdvancedQuotation = () => {
                   checked={selectedAnimations.includes('slide')}
                   onChange={(e) => handleAnimationSelect('slide')}
                 />
-                <label htmlFor="animation-slide">Slide Effects</label>
+                <label htmlFor="animation-slide">Deslizamiento de elementos</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -502,7 +514,7 @@ const AdvancedQuotation = () => {
                   checked={selectedAnimations.includes('parallax')}
                   onChange={(e) => handleAnimationSelect('parallax')}
                 />
-                <label htmlFor="animation-parallax">Parallax Scrolling</label>
+                <label htmlFor="animation-parallax">Efecto de profundidad al desplazarse</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -513,7 +525,7 @@ const AdvancedQuotation = () => {
                   checked={selectedAnimations.includes('advanced')}
                   onChange={(e) => handleAnimationSelect('advanced')}
                 />
-                <label htmlFor="animation-advanced">Animaciones avanzadas CSS3 (+$1,500 MXN)</label>
+                <label htmlFor="animation-advanced">Animaciones avanzadas e interactivas (+$1,500 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -524,7 +536,7 @@ const AdvancedQuotation = () => {
                   checked={selectedAnimations.includes('3d')}
                   onChange={(e) => handleAnimationSelect('3d')}
                 />
-                <label htmlFor="animation-3d">Efectos 3D (+$2,500 MXN)</label>
+                <label htmlFor="animation-3d">Efectos visuales tridimensionales (+$2,500 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -535,7 +547,7 @@ const AdvancedQuotation = () => {
                   checked={selectedAnimations.includes('interactive')}
                   onChange={(e) => handleAnimationSelect('interactive')}
                 />
-                <label htmlFor="animation-interactive">Interacciones personalizadas (+$3,000 MXN)</label>
+                <label htmlFor="animation-interactive">Elementos que responden a las acciones del usuario (+$3,000 MXN)</label>
               </div>
             </div>
             
@@ -559,7 +571,7 @@ const AdvancedQuotation = () => {
               </div>
               <div className="checkbox-item">
                 <input type="checkbox" checked disabled />
-                <label>Google Analytics avanzado</label>
+                <label>Estadísticas detalladas de visitantes</label>
               </div>
               <div className="checkbox-item">
                 <input type="checkbox" checked disabled />
@@ -578,7 +590,7 @@ const AdvancedQuotation = () => {
                   checked={additionalFeatures.includes('payment-gateway')}
                   onChange={(e) => handleFeatureChange('payment-gateway', e.target.checked)}
                 />
-                <label htmlFor="payment">Pasarela de pago integrada (+$3,500 MXN)</label>
+                <label htmlFor="payment">Sistema de pagos online para reservaciones (+$3,500 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -589,7 +601,7 @@ const AdvancedQuotation = () => {
                   checked={additionalFeatures.includes('user-accounts')}
                   onChange={(e) => handleFeatureChange('user-accounts', e.target.checked)}
                 />
-                <label htmlFor="accounts">Sistema de cuentas de usuario (+$2,800 MXN)</label>
+                <label htmlFor="accounts">Área para clientes registrados/Cuentas de usuario (+$2,800 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -600,7 +612,7 @@ const AdvancedQuotation = () => {
                   checked={additionalFeatures.includes('reviews')}
                   onChange={(e) => handleFeatureChange('reviews', e.target.checked)}
                 />
-                <label htmlFor="reviews">Sistema de reseñas y calificaciones (+$1,500 MXN)</label>
+                <label htmlFor="reviews">Sección de opiniones y valoraciones de clientes (+$1,500 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -611,7 +623,7 @@ const AdvancedQuotation = () => {
                   checked={additionalFeatures.includes('api-integration')}
                   onChange={(e) => handleFeatureChange('api-integration', e.target.checked)}
                 />
-                <label htmlFor="api">Integración con APIs externas (OTAs, etc.) (+$3,000 MXN)</label>
+                <label htmlFor="api">Conexión con plataformas externas de reserva (Booking, Expedia, etc.) (+$3,000 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -622,7 +634,7 @@ const AdvancedQuotation = () => {
                   checked={additionalFeatures.includes('custom-dashboard')}
                   onChange={(e) => handleFeatureChange('custom-dashboard', e.target.checked)}
                 />
-                <label htmlFor="dashboard">Panel de administración personalizado (+$4,000 MXN)</label>
+                <label htmlFor="dashboard">Panel de administración personalizado para gestionar su web (+$4,000 MXN)</label>
               </div>
             </div>
             
@@ -661,16 +673,16 @@ const AdvancedQuotation = () => {
               onChange={handleInputChange}
             ></textarea>
             
-            <label htmlFor="has_branding">¿Dispone de manual de marca, logotipos y otros elementos gráficos?</label>
+            <label htmlFor="has_branding">¿Dispone de logotipos y elementos de imagen corporativa?</label>
             <select 
               id="has_branding" 
               name="has_branding"
               value={formData.has_branding}
               onChange={handleInputChange}
             >
-              <option value="yes">Sí, tenemos material de marca completo</option>
+              <option value="yes">Sí, tenemos todo el material visual de nuestra marca</option>
               <option value="partial">Parcialmente, tenemos algunos elementos</option>
-              <option value="no">No, necesitaremos ayuda con estos elementos</option>
+              <option value="no">No, necesitaremos ayuda para crear nuestros elementos visuales</option>
             </select>
           </div>
           
@@ -717,7 +729,7 @@ const AdvancedQuotation = () => {
               <li>Solución completa para moteles que buscan destacar en el mercado digital</li>
               <li>Sistema completo de reservas y pagos en línea</li>
               <li>Experiencia de usuario premium y totalmente personalizada</li>
-              <li>Integración con plataformas externas (OTAs, CRS, etc.)</li>
+              <li>Integración con plataformas externas (Booking, Expedia, etc.)</li>
               <li>Posicionamiento SEO avanzado y estrategia digital completa</li>
               <li>Análisis detallado de comportamiento de usuarios</li>
               <li>Soporte prioritario 24/7</li>

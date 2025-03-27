@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import './QuotationForm.css';
 
 const IntermediateQuotation = () => {
@@ -151,17 +150,30 @@ const IntermediateQuotation = () => {
         selectedAnimations: selectedAnimations,
         additionalFeatures: additionalFeatures,
         estimatedPrice: price,
+        finalPrice: price, // Añadimos el precio final igual al estimado inicialmente
         submissionDate: new Date(),
         status: 'pending'
       };
       
-      // Enviar los datos al backend
-      const response = await axios.post('http://localhost:5000/api/quotations', quotationData);
+      // Enviar los datos al backend usando fetch en lugar de axios
+      const response = await fetch('http://localhost:5000/api/quotations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(quotationData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+      
+      const data = await response.json();
       
       setSubmitStatus({
         success: true,
         message: 'Cotización enviada correctamente. Nos pondremos en contacto pronto para negociar los detalles.',
-        quotationId: response.data._id
+        quotationId: data._id
       });
       
       // Resetear el formulario
@@ -457,7 +469,7 @@ const IntermediateQuotation = () => {
                   checked={selectedAnimations.includes('fade')}
                   onChange={(e) => handleAnimationSelect('fade')}
                 />
-                <label htmlFor="animation-fade">Aparición suave de elementos al navegar (+$500 MXN)</label>
+                <label htmlFor="animation-fade">Elementos que aparecen suavemente al navegar (+$500 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -468,7 +480,7 @@ const IntermediateQuotation = () => {
                   checked={selectedAnimations.includes('slide')}
                   onChange={(e) => handleAnimationSelect('slide')}
                 />
-                <label htmlFor="animation-slide">Movimiento de elementos al desplazarse (+$700 MXN)</label>
+                <label htmlFor="animation-slide">Elementos que se deslizan al hacer scroll (+$700 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -479,7 +491,7 @@ const IntermediateQuotation = () => {
                   checked={selectedAnimations.includes('parallax')}
                   onChange={(e) => handleAnimationSelect('parallax')}
                 />
-                <label htmlFor="animation-parallax">Efecto de profundidad al desplazarse por la página (+$1,200 MXN)</label>
+                <label htmlFor="animation-parallax">Efecto de profundidad en imágenes al desplazarse (+$1,200 MXN)</label>
               </div>
             </div>
             
@@ -514,7 +526,7 @@ const IntermediateQuotation = () => {
                   checked={additionalFeatures.includes('booking-system')}
                   onChange={(e) => handleFeatureChange('booking-system', e.target.checked)}
                 />
-                <label htmlFor="booking">Sistema básico de reservas para habitaciones (+$2,500 MXN)</label>
+                <label htmlFor="booking">Sistema sencillo para reservar habitaciones online (+$2,500 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -547,7 +559,7 @@ const IntermediateQuotation = () => {
                   checked={additionalFeatures.includes('analytics')}
                   onChange={(e) => handleFeatureChange('analytics', e.target.checked)}
                 />
-                <label htmlFor="analytics">Estadísticas detalladas de visitantes y su comportamiento (+$1,000 MXN)</label>
+                <label htmlFor="analytics">Estadísticas de visitantes y su comportamiento (+$1,000 MXN)</label>
               </div>
               <div className="checkbox-item">
                 <input 
@@ -558,7 +570,7 @@ const IntermediateQuotation = () => {
                   checked={additionalFeatures.includes('chat')}
                   onChange={(e) => handleFeatureChange('chat', e.target.checked)}
                 />
-                <label htmlFor="chat">Chat en vivo para atención inmediata al cliente (+$1,500 MXN)</label>
+                <label htmlFor="chat">Chat en vivo para atender a clientes inmediatamente (+$1,500 MXN)</label>
               </div>
             </div>
             
